@@ -1,6 +1,7 @@
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
+import 'dotenv/config';
 
 const app = express();
 
@@ -8,17 +9,20 @@ var corsOptions = {
     origin: process.env.CLIENT_ORIGIN || "http://localhost:5173"
 };
 
-// app.use(cors());
-app.use(cors(corsOptions));
+app.use(cors());
+// app.use(cors(corsOptions));
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: "mysqldb",
-    user: "root",
-    port: "3306",
-    password: "123456",
-    database: "fa24_renomy_db",
+    host: process.env.MYSQLDB_HOST,
+    user: process.env.MYSQLDB_USER,
+    port: process.env.MYSQLDB_DOCKER_PORT,
+    password: process.env.MYSQLDB_ROOT_PASSWORD,
+    database: process.env.MYSQLDB_DATABASE,
 });
+
+// print environment variable
+console.log("SYSTEM_ENV: ", process.env.SYSTEM_ENV);
 
 db.connect((err) => {
     if (err) {
@@ -106,6 +110,6 @@ app.put("/books/:id", (req, res) => {
     });
 });
 
-app.listen(8080, () => {
+app.listen(process.env.NODE_DOCKER_PORT, () => {
     console.log("Connected to backend.");
 });
